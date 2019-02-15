@@ -1,0 +1,6 @@
+.dockerignore
+Dockerfile
+.git
+*.pyc
+mypy.ini
+Makefile
