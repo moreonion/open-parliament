@@ -332,3 +332,67 @@ class PersonalPage:
             education = education[0].nextSibling.nextSibling.find_all("li")
             return {"education": [e.text.strip() for e in education]}
         return {}
+
+
+class CommitteesPage:
+    """
+    Parses an MP's committee page.
+
+    Calling :func:`parse` will obtain the following attributes for the :attr:`mp` instance:
+    - committees
+    """
+
+    def __init__(self, html):
+        """
+        :param html: A text response from an MP's committee page.
+        """
+        self.page = BeautifulSoup(html, features="html.parser")
+
+    def parse(self):
+        """
+        Parse an MP's committees.
+
+        :returns: A dictionary containing a list of committees as returned by
+                  :func:`_parse_committee_links` indexed with key :code:`committees`.
+        """
+        self.content = self.page.find(
+            "div", class_="contentBlockContent showContentBlock"
+        )
+        positions = self.content.find_all("ul")
+        committees = {}
+
+        for p in positions:
+            position = p.previousSibling.previousSibling.text.strip()
+            try:
+                committees.update(
+                    {
+                        position: self._parse_committee_links(
+                            p.find_all("a", class_="link-indicator")
+                        )
+                    }
+                )
+            except StopIteration:
+                break
+
+        return {"committees": committees}
+
+    def _parse_committee_links(self, links):
+        """
+        Parse the links to the committees where the MP holds a certain position.
+
+        :returns: A dictionary indexed by the committee's id containing the keys :code:`url`,
+        :code:`name` and :code:`since` (indicating since when the MP is a member of said committee).
+        """
+        committees = {}
+
+        for link in links:
+            url = link.attrs["href"]
+            id_ = re.sub("/index.shtml$", "", url)
+            id_ = id_[id_.rfind("/") + 1 :]
+            name, date = link.text.split("(")
+            if not date.endswith("–)"):
+                raise StopIteration()
+            date = date.rstrip("–)")
+            committees[id_] = {"url": url, "name": name.strip(), "since": date.strip()}
+
+        return committees
