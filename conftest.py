@@ -51,7 +51,7 @@ AKTUELL = BASE + "/WWER/NR/AKT/index.shtml"
 def fetch_page(url):
     response = requests.get(url)
     if response.status_code == 200:
-        return BeautifulSoup(response.content, features="html.parser")
+        return response.content
 
 
 def get_mp_table():
@@ -87,3 +87,15 @@ def mps_base(request_response_from_files, shared_datadir):
                 mps[mp["id"]] = mp
 
     return mps
+
+
+@pytest.fixture(scope="function")
+def parse_page(request_response_from_files, shared_datadir):
+    def _parse_page(url, path, Parser, **kwargs):
+        filemap = {url: [shared_datadir / path]}
+        with request_response_from_files(BASE, filemap):
+            page = fetch_page(BASE + url)
+        parser = Parser(page)
+        return parser.parse(**kwargs)
+
+    return _parse_page
