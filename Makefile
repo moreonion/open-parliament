@@ -11,3 +11,17 @@ test-local:
 
 clean:
 	find . -name "*.pyc" -delete
+
+requirements: clean-reqs requirements/requirements.txt requirements/requirements-test.txt requirements/requirements-dev.txt
+
+clean-reqs:
+	rm requirements/*.txt
+
+requirements/requirements.txt: requirements/requirements.in
+	pip-compile --rebuild --output-file $@ requirements/requirements.in > /dev/null
+
+requirements/requirements-test.txt: requirements/requirements-test.in requirements/requirements.in
+	pip-compile --rebuild --output-file $@ requirements/requirements.in requirements/requirements-test.in > /dev/null
+
+requirements/requirements-dev.txt: requirements/requirements.in requirements/requirements-test.in requirements/requirements-dev.in
+	pip-compile --rebuild --output-file $@ requirements/requirements.in requirements/requirements-test.in requirements/requirements-dev.in > /dev/null
