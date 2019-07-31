@@ -15,7 +15,7 @@ clean:
 requirements: clean-reqs requirements/requirements.txt requirements/requirements-test.txt requirements/requirements-dev.txt
 
 clean-reqs:
-	rm requirements/*.txt
+	rm -f requirements/*.txt
 
 requirements/requirements.txt: requirements/requirements.in
 	pip-compile --rebuild --output-file $@ requirements/requirements.in > /dev/null
