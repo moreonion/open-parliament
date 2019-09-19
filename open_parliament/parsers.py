@@ -201,7 +201,7 @@ class PersonalPage:
             e.nextSibling for e in graubox.find_all("em") if e.text == "Anschrift:"
         ]
 
-        address = address_raw[0].li.get_text("\n")
+        address = address_raw[0].li.get_text("\n") if address_raw else None
         emails = [re.sub(r"^mailto:", "", e.attrs["href"]) for e in emails_raw]
         phone_numbers = [t.text for t in telephone_raw]
         websites = [w.attrs["href"] for w in websites_raw]
