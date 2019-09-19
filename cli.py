@@ -74,10 +74,13 @@ def convert_to_csv(jsonfile, output):
                 mp_data["last_name"],
             )
         mp.update({k: mp_data[k] for k in WANTED_FIELDS})
-        committees = sorted(
-            [c["name"] for f in mp_data["committees"].values() for c in f.values()]
-        )
-        mp["committees"] = "," + ",".join(committees) + ","
+        if "committees" in mp_data:
+            committees = sorted(
+                [c["name"] for f in mp_data["committees"].values() for c in f.values()]
+            )
+            mp["committees"] = "," + ",".join(committees) + ","
+        else:
+            mp["committees"] = ""
         mandates = [m["title"] for m in mp_data["mandates"]]
         mp["mandates"] = "," + ",".join(mandates) + ","
         # extract party from political_affiliation field

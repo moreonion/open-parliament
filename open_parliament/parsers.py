@@ -44,9 +44,7 @@ class Row:
             if title == "name":
                 mp.update(self._parse_name(cell, content))
             elif title == "fraktion":
-                fraktion, klub = self._parse_abbreviation(
-                    content
-                )
+                fraktion, klub = self._parse_abbreviation(content)
                 mp["political_affiliation"] = klub + " (" + fraktion + ")"
             elif title == "wahlkreis":
                 mp["wahlkreis"] = content.text.strip()
@@ -167,6 +165,7 @@ class PersonalPage:
             salutation = salutation[: salutation.rfind(" - ")]
         mp["is_president"] = is_president
         mp["salutation"] = salutation
+        mp["in_committees"] = self.page.find("a", href="#tab-Ausschuesse") is not None
         mp.update(self._parse_picture())
         mp.update(self._parse_contact_information())
         mp.update(self._parse_biography())

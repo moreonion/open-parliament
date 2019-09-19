@@ -54,10 +54,13 @@ class NationalratsSpider(scrapy.Spider):
             yield request
         else:
             mp = self.parse_details(response, False)
-            url = self.BASE + mp["url"] + "index.shtml#tab-Ausschuesse"
-            request = scrapy.Request(url, callback=self.parse_committees)
-            request.meta["mp"] = mp
-            yield request
+            if mp["in_committees"]:
+                url = self.BASE + mp["url"] + "index.shtml#tab-Ausschuesse"
+                request = scrapy.Request(url, callback=self.parse_committees)
+                request.meta["mp"] = mp
+                yield request
+            else:
+                yield mp
 
     def parse_president(self, response):
         mp = self.parse_details(response, True)
