@@ -43,7 +43,6 @@ def scrape(output):
             os.path.join(os.path.dirname(__file__), "spider.py"),
             "-o",
             output,
-            "--output-format=jsonlines",
             "--loglevel=INFO",
         ]
     )
