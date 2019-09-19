@@ -44,9 +44,7 @@ class Row:
             if title == "name":
                 mp.update(self._parse_name(cell, content))
             elif title == "fraktion":
-                fraktion, klub = self._parse_abbreviation(
-                    content
-                )
+                fraktion, klub = self._parse_abbreviation(content)
                 mp["political_affiliation"] = klub + " (" + fraktion + ")"
             elif title == "wahlkreis":
                 mp["wahlkreis"] = content.text.strip()
@@ -167,6 +165,7 @@ class PersonalPage:
             salutation = salutation[: salutation.rfind(" - ")]
         mp["is_president"] = is_president
         mp["salutation"] = salutation
+        mp["in_committees"] = self.page.find("a", href="#tab-Ausschuesse") is not None
         mp.update(self._parse_picture())
         mp.update(self._parse_contact_information())
         mp.update(self._parse_biography())
@@ -202,7 +201,7 @@ class PersonalPage:
             e.nextSibling for e in graubox.find_all("em") if e.text == "Anschrift:"
         ]
 
-        address = address_raw[0].li.get_text("\n")
+        address = address_raw[0].li.get_text("\n") if address_raw else None
         emails = [re.sub(r"^mailto:", "", e.attrs["href"]) for e in emails_raw]
         phone_numbers = [t.text for t in telephone_raw]
         websites = [w.attrs["href"] for w in websites_raw]
