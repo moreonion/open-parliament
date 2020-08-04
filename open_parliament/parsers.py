@@ -388,7 +388,7 @@ class CommitteesPage:
             url = link.attrs["href"]
             id_ = re.sub("/index.shtml$", "", url)
             id_ = id_[id_.rfind("/") + 1 :]
-            name, date = link.text.split("(")
+            name, date = link.text.rsplit("(", maxsplit=1)
             if not date.endswith("–)"):
                 raise StopIteration()
             date = date.rstrip("–)")
