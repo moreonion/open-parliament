@@ -20,6 +20,6 @@ setup(
         'click',
         'urllib3==1.24.2',
         'requests==2.21.0',
-        'scrapy==1.6.0',
+        'scrapy==2.8.0',
     ],
 )
